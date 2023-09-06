@@ -53,15 +53,15 @@ class User:
         if len(user['username']) < 3: # Here we check that the username is at least 3 characters long
             flash("Username name must be at least 3 characters")
             is_valid= False
-        if user['username'][0].isnumeric(): # Checks if first character is a number
-            flash("Username cannot start with a number")
-            is_valid= False
+        else:
+            if user['username'][0].isnumeric(): # Checks if first character is a number
+                flash("Username cannot start with a number")
+                is_valid= False
         if len(user['password']) < 8: # Checks if our password is at least 8 characters long
             flash("Password must be at least 8 characters")
             is_valid= False
-
-        # We will add this later
-        # if user['password'] != user['confirm']:
-        #     flash("Passwords don't match")
+        if user['password'] != user['confirm']: # Compares the two passwords
+            flash("Password do not match")
+            is_valid= False
 
         return is_valid # We return True for a valid form and False for an invalid form
