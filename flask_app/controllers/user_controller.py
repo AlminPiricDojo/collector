@@ -2,6 +2,10 @@ from flask import render_template,redirect,session,request, flash
 from flask_app import app
 from flask_app.models.user_model import User
 
+from flask_bcrypt import Bcrypt # Import Bcrypt
+
+bcrypt = Bcrypt(app) # Create a Bcrypt object (we have to pass in our app)
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -13,10 +17,12 @@ def register():
         return redirect('/') # If form data is bad, we redirect to our home page and display the flash messages
     
     # If our form data is good, we use it to create user data
+
+    pw_hash = bcrypt.generate_password_hash(request.form['password']) # Here we hash the entered password
     
     data = {
         "username": request.form['username'],
-        "password": request.form['password']
+        "password": pw_hash # We no longer save the raw password. Instead, we save the hashed version.
     }
 
     id = User.save(data) # A successful addition to our db returns the row number (id)
@@ -33,7 +39,9 @@ def login():
         flash("Invalid Username")
         return redirect('/')
     
-    if user.password != request.form['password']: # If the password is wrong, we redirect to our home page and display a flash message
+    # The original password check compared the form password to the raw password in the database
+    # This new password check makes use of the check_password_hash method to compare the hashed versions
+    if not bcrypt.check_password_hash(user.password, request.form['password']):
         flash("Invalid Password")
         return redirect('/')
     
