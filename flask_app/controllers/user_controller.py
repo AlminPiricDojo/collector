@@ -2,6 +2,8 @@ from flask import render_template,redirect,session,request, flash
 from flask_app import app
 from flask_app.models.user_model import User
 
+from flask_app.models import item_model # We import item_model to get access to the Item class
+
 from flask_bcrypt import Bcrypt # Import Bcrypt
 
 bcrypt = Bcrypt(app) # Create a Bcrypt object (we have to pass in our app)
@@ -61,7 +63,9 @@ def dashboard():
 
     user = User.get_by_id(data) # We pass the data to User.get_by_id to get the user from our database
 
-    return render_template("dashboard.html", user=user) # We render our dashboard page and pass along the user info
+    items = item_model.Item.get_all() # We get all items from our database
+
+    return render_template("dashboard.html", user=user, items=items) # We render our dashboard page and pass along the user info and a list of items
 
 @app.route('/logout')
 def logout():
