@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: red;">{{message}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <h3>Add new item</h3>
+    <form action="/items/add" method="POST">
+        <input type="hidden" name="user_id" value="{{session['user_id']}}">
+        <label for="name" >Item Name:</label>
+        <input type="text" name="name">
+        <label for="description" >Item Description:</label>
+        <input type="text" name="description">
+        <input type="submit" value="Add">
+    </form> 
+    <p><a href="/dashboard">Back to dashboard</a></p>
+</body>
+</html>
