@@ -7,6 +7,12 @@
 </head>
 <body>
     <p>Welcome {{user.username}}</p>
+    <p><a href="/items/add">Add new item</a></p>
+    <h4>All Items:</h4>
+    {% for item in items %}
+        <p><a href="/items/{{item.id}}">{{item.name}}</a> added by <a href="/users/{{user.id}}">{{item.user.username}}</a></p>
+    {% endfor %}
+    <hr>
     <p><a href="/logout">Log out</a></p>
 </body>
 </html>
