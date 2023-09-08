@@ -13,8 +13,12 @@
     <p>{{item.user.username}}</p>
     <h4>Added on:</h4>
     <p>{{item.created_at}}</p>
-    <p><a href="/items/{{item.id}}/update">Edit</a></p>
-    <p><a href="/items/{{item.id}}/delete">Delete</a></p>
+    <h4>Updated on:</h4>
+    <p>{{item.updated_at}}</p>
+    {% if session['user_id'] == item.user.id %}
+        <p><a href="/items/{{item.id}}/update">Edit</a></p>
+        <p><a href="/items/{{item.id}}/delete">Delete</a></p>
+    {% endif %}
     <hr>
     <p><a href="/dashboard">Back to dashboard</a></p>
 </body>

@@ -59,3 +59,26 @@ class Item:
         this_item.user = user_model.User(user_data) # Instantiate the user and associate them with the item
 
         return this_item # Return the instance of the item (along with the user)
+    
+    @classmethod
+    def update(cls, data):
+        query = "UPDATE items SET name=%(name)s, description=%(description)s, updated_at=NOW() WHERE id=%(id)s"
+        return connectToMySQL('collector-py').query_db(query, data)
+    
+    @classmethod
+    def delete(cls, id):
+        query = "DELETE FROM items WHERE id=%(id)s"
+        return connectToMySQL('collector-py').query_db(query, {"id":id})
+    
+    @staticmethod # We use the static method to perform checks on the item data coming from our form
+    def validate_item(item): # item is just a dictionary at this point because it is coming from our form
+        is_valid = True # is_valid starts at True, and only changes to False if one of the checks fails
+
+        if len(item['name']) < 1: # Make sure the item name is at least one character long
+            flash("Item name is required")
+            is_valid= False
+        if len(item['description']) < 1: # Make sure the item description is at least one character long
+            flash("Description is required")
+            is_valid= False
+
+        return is_valid # We return True for a valid form and False for an invalid form

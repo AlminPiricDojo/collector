@@ -1,0 +1,19 @@
+body {
+    max-width: 1080px;
+    margin: auto;
+}
+table {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    border: 1px solid #ced7dd;
+    table-layout: fixed; /* This makes each column the same width. It also helps with large tables by displaying some data while the rest loads. */
+}
+tr {
+    border-bottom: 1px solid #ddd;
+    background-color: rgba(150, 212, 212, 0.2);
+}
+td {
+    padding: 16px;
+    text-align: center;
+}

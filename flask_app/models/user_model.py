@@ -1,6 +1,8 @@
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
 
+from flask_app.models import item_model # Import item_model to get access to the Item class
+
 class User:
     def __init__(self, data) -> None:
         self.id = data['id']
@@ -8,6 +10,7 @@ class User:
         self.password = data['password']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
+        self.items = [] # This list will hold all Items created by a user
 
     @classmethod
     def get_all(cls):
@@ -65,3 +68,21 @@ class User:
             is_valid= False
 
         return is_valid # We return True for a valid form and False for an invalid form
+    
+    @classmethod
+    def get_user_items(cls, data):
+        query = "SELECT * FROM users LEFT JOIN items ON users.id=items.user_id WHERE users.id=%(id)s" # Get all users and the items they have created
+        results = connectToMySQL('collector-py').query_db(query, data) # We need to pass the user id into our query
+        user = cls(results[0]) # 'user' now holds an instance of User
+        for item in results: # We iterate through all items in our results
+            item_data = {
+                'id': item['items.id'], # We need to specify the table for attributes that are found in both tables (id, created_at, updated_at)
+                'name': item['name'],
+                'description': item['description'],
+                'created_at': item['items.created_at'],
+                'updated_at': item['items.updated_at'],
+                'user_id': item['user_id']
+            }
+            this_item = item_model.Item(item_data)
+            user.items.append(this_item) # Instantiate Item using the dictionary data and add it to user.items (the list we created earlier)
+        return user # Return the user instance along with a full list of items

@@ -3,16 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Document</title>
 </head>
 <body>
     <p>Welcome {{user.username}}</p>
     <p><a href="/items/add">Add new item</a></p>
-    <h4>All Items:</h4>
-    {% for item in items %}
-        <p><a href="/items/{{item.id}}">{{item.name}}</a> added by <a href="/users/{{user.id}}">{{item.user.username}}</a></p>
-    {% endfor %}
-    <hr>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Added By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+                <tr>
+                    <td><a href="/items/{{item.id}}">{{item.name}}</a></td>
+                    <td><a href="/users/{{user.id}}">{{item.user.username}}</a></td>
+                    <td>
+                        {% if session['user_id'] == item.user.id %}
+                            <a href="/items/{{item.id}}/update">Edit</a> | <a href="/items/{{item.id}}/delete">Delete</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <p><a href="/logout">Log out</a></p>
 </body>
 </html>

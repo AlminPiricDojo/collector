@@ -67,6 +67,19 @@ def dashboard():
 
     return render_template("dashboard.html", user=user, items=items) # We render our dashboard page and pass along the user info and a list of items
 
+@app.route('/users/<int:id>')
+def view_user(id):
+    if 'user_id' not in session: # We check if a user_id is present in session, which would mean that a user is logged in
+        return redirect('/logout') # No user_id means we go to our logout route
+    
+    data = {
+        'id': session['user_id'] # We get the user_id from session
+    }
+
+    user = User.get_user_items(data) # We pass the data to User.get_by_id to get the user from our database
+
+    return render_template("view_user.html", user=user) # We render our dashboard page and pass along the user info
+
 @app.route('/logout')
 def logout():
     session.clear() # Our logout route just clears session, which deletes the user_id logging the user out

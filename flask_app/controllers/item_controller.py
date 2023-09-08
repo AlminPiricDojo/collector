@@ -9,8 +9,8 @@ def add_item():
     if request.method == 'GET':
         return render_template("add_item.html")
     
-    # if not Item.validate_item(request.form): # This is where we make sure that our form data is valid
-    #     return redirect('/items/add') # If form data is bad, we redirect to the add item page
+    if not Item.validate_item(request.form): # This is where we make sure that our form data is valid
+        return redirect('/items/add') # If form data is bad, we redirect to the add item page
     
     data = {
         'name': request.form['name'],
@@ -25,3 +25,25 @@ def add_item():
 def show_item(id):
     item = Item.get_one(id)
     return render_template("view_item.html", item=item)
+
+@app.route("/items/<int:id>/update", methods=['GET', 'POST'])
+def update_item(id):
+    if request.method == 'GET':
+        item = Item.get_one(id)
+        return render_template("update_item.html", item=item)
+    
+    if not Item.validate_item(request.form): # This is where we make sure that our form data is valid
+        return redirect(f'/items/{id}/update') # If form data is bad, we redirect to the update item page
+    
+    data = {
+        'id': id,
+        'name': request.form['name'],
+        'description': request.form['description']
+    }
+    item = Item.update(data)
+    return redirect("/dashboard")
+
+@app.route("/items/<int:id>/delete")
+def delete_item(id):
+    Item.delete(id)
+    return redirect("/dashboard")
