@@ -83,6 +83,6 @@ class User:
                 'updated_at': item['items.updated_at'],
                 'user_id': item['user_id']
             }
-            this_item = item_model.Item(item_data)
-            user.items.append(this_item) # Instantiate Item using the dictionary data and add it to user.items (the list we created earlier)
+            this_item = item_model.Item(item_data) # Instantiate Item using the dictionary data
+            user.items.append(this_item) # Add item object to user.items (the list we created earlier)
         return user # Return the user instance along with a full list of items
