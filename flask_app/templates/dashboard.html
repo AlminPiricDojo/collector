@@ -21,7 +21,7 @@
             {% for item in items %}
                 <tr>
                     <td><a href="/items/{{item.id}}">{{item.name}}</a></td>
-                    <td><a href="/users/{{user.id}}">{{item.user.username}}</a></td>
+                    <td><a href="/users/{{item.user.id}}">{{item.user.username}}</a></td>
                     <td>
                         {% if session['user_id'] == item.user.id %}
                             <a href="/items/{{item.id}}/update">Edit</a> | <a href="/items/{{item.id}}/delete">Delete</a>
