@@ -73,7 +73,7 @@ def view_user(id):
         return redirect('/logout') # No user_id means we go to our logout route
     
     data = {
-        'id': session['user_id'] # We get the user_id from session
+        'id': id
     }
 
     user = User.get_user_items(data) # We pass the data to User.get_by_id to get the user from our database
