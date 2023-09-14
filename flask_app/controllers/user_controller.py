@@ -63,7 +63,7 @@ def dashboard():
 
     user = User.get_by_id(data) # We pass the data to User.get_by_id to get the user from our database
 
-    items = item_model.Item.get_all() # We get all items from our database
+    items = item_model.Item.get_all(data) # We get all items from our database
 
     return render_template("dashboard.html", user=user, items=items) # We render our dashboard page and pass along the user info and a list of items
 

@@ -15,6 +15,7 @@
                 <th>Item Name</th>
                 <th>Added By</th>
                 <th>Actions</th>
+                <th>Number of Likes</th>
             </tr>
         </thead>
         <tbody>
@@ -25,8 +26,15 @@
                     <td>
                         {% if session['user_id'] == item.user.id %}
                             <a href="/items/{{item.id}}/update">Edit</a> | <a href="/items/{{item.id}}/delete">Delete</a>
+                        {% else %} <!-- We will only allow users to like/unlike items they did not add -->
+                            {% if item.liked == 0 %}
+                                <a href="/items/{{item.id}}/like">Like</a>
+                            {% else %}
+                                <a href="/items/{{item.id}}/unlike">Unlike</a>
+                            {% endif %}
                         {% endif %}
                     </td>
+                    <td>{{item.number_of_likes}}</td>
                 </tr>
             {% endfor %}
         </tbody>

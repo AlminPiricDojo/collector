@@ -81,7 +81,9 @@ class User:
                 'description': item['description'],
                 'created_at': item['items.created_at'],
                 'updated_at': item['items.updated_at'],
-                'user_id': item['user_id']
+                'user_id': item['user_id'],
+                'liked': None,
+                'number_of_likes': None
             }
             this_item = item_model.Item(item_data) # Instantiate Item using the dictionary data
             user.items.append(this_item) # Add item object to user.items (the list we created earlier)

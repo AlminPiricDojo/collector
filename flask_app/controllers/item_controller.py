@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from flask_app import app
 from flask_app.models.item_model import Item
 
@@ -23,7 +23,11 @@ def add_item():
 
 @app.route("/items/<int:id>")
 def show_item(id):
-    item = Item.get_one(id)
+    data = {
+        'item_id': id,
+        'user_id': session["user_id"]
+    }
+    item = Item.get_one(data)
     return render_template("view_item.html", item=item)
 
 @app.route("/items/<int:id>/update", methods=['GET', 'POST'])
@@ -41,6 +45,24 @@ def update_item(id):
         'description': request.form['description']
     }
     item = Item.update(data)
+    return redirect("/dashboard")
+
+@app.route("/items/<int:id>/like")
+def like(id):
+    data = {
+        "user_id": session["user_id"],
+        "item_id": id
+    }
+    Item.like(data)
+    return redirect("/dashboard")
+
+@app.route("/items/<int:id>/unlike")
+def unlike(id):
+    data = {
+        "user_id": session["user_id"],
+        "item_id": id
+    }
+    Item.unlike(data)
     return redirect("/dashboard")
 
 @app.route("/items/<int:id>/delete")

@@ -12,11 +12,19 @@ class Item:
         self.updated_at = data['updated_at']
         self.user_id = data['user_id']
         self.user = None # This will hold an instance of User (the user who created the item)
+        self.liked = data['liked'] # 1 if user has liked the item, 0 if user has not liked the item
+        self.number_of_likes = data['number_of_likes'] # Get number of likes for each item
 
     @classmethod
-    def get_all(cls):
-        query = "SELECT * FROM items LEFT JOIN users ON items.user_id=users.id;" # Get all items and the user who created each one
-        results = connectToMySQL('collector-py').query_db(query)
+    def get_all(cls, data):
+        query = '''
+            SELECT *, (SELECT COUNT(user_id) FROM likes WHERE likes.item_id=items.id AND user_id=%(id)s) AS liked,
+            (SELECT COUNT(user_id) FROM likes WHERE likes.item_id=items.id) AS number_of_likes FROM items
+            LEFT JOIN users ON items.user_id=users.id
+            ORDER BY number_of_likes DESC;
+        ''' # Get all items and the user who created each one along with a 'liked' column that shows if the user has liked the item
+        # We also get the number of likes for each item and sort them from highest to lowest
+        results = connectToMySQL('collector-py').query_db(query, data)
 
         items = [] # This list will hold all items that come back from the db
 
@@ -24,7 +32,7 @@ class Item:
             this_item = cls(row) # Create an Item instance using the dictionary data from each row in the db
 
             user_data = {
-                'id': row['user_id'],
+                'id': row['users.id'],
                 'username': row['username'],
                 'password': row['password'],
                 'created_at': row['users.created_at'], # We need to specify the table when a column is present in more than one table
@@ -42,9 +50,14 @@ class Item:
         return connectToMySQL('collector-py').query_db(query, data)
     
     @classmethod
-    def get_one(cls, id):
-        query = "SELECT * FROM items LEFT JOIN users ON items.user_id=users.id WHERE items.id=%(id)s"
-        results = connectToMySQL('collector-py').query_db(query, {'id':id})
+    def get_one(cls, data):
+        query = '''
+            SELECT *, (SELECT COUNT(user_id) FROM likes WHERE likes.item_id=items.id AND user_id=%(user_id)s) AS liked,
+            (SELECT COUNT(user_id) FROM likes WHERE likes.item_id=items.id) AS number_of_likes FROM items 
+            LEFT JOIN users ON items.user_id=users.id
+            WHERE items.id=%(item_id)s;
+        '''
+        results = connectToMySQL('collector-py').query_db(query, data)
 
         this_item = cls(results[0]) # Instantiate the item using the data from the db
 
@@ -82,3 +95,13 @@ class Item:
             is_valid= False
 
         return is_valid # We return True for a valid form and False for an invalid form
+    
+    @classmethod
+    def like(cls, data):
+        query = "INSERT INTO likes (user_id, item_id) VALUES (%(user_id)s,%(item_id)s);"
+        return connectToMySQL('collector-py').query_db(query, data)
+    
+    @classmethod
+    def unlike(cls, data):
+        query = "DELETE FROM likes WHERE user_id=%(user_id)s AND item_id=%(item_id)s;"
+        return connectToMySQL('collector-py').query_db(query, data)

@@ -19,6 +19,14 @@
         <p><a href="/items/{{item.id}}/update">Edit</a></p>
         <p><a href="/items/{{item.id}}/delete">Delete</a></p>
     {% endif %}
+    <h4>Number of likes:</h4>
+    <p>{{item.number_of_likes}}</p>
+    <h4>Like/Unlike:</h4>
+    {% if item.liked == 0 %}
+        <a href="/items/{{item.id}}/like">Like</a>
+    {% else %}
+        <a href="/items/{{item.id}}/unlike">Unlike</a>
+    {% endif %}
     <hr>
     <p><a href="/dashboard">Back to dashboard</a></p>
 </body>
